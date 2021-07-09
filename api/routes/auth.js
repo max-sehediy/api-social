@@ -5,15 +5,15 @@ const bcrypt = require('bcrypt')
 router.get('/', (req, res) => {
   res.send('wow')
 })
-
+// create user
 router.post('/register', async (req, res, next) => {
-  const { userName, email, password } = req.body
+  const { username, email, password } = req.body
 
   try {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
     const newUser = new User({
-      userName, email, password: hashedPassword
+      username, email, password: hashedPassword
     })
     const user = await newUser.save()
     res.status(200).json(user)
@@ -22,8 +22,9 @@ router.post('/register', async (req, res, next) => {
   }
 })
 
+// login a user
 router.post('/login', async (req, res, next) => {
-  const { userName, email, password } = req.body
+  const { username, email, password } = req.body
   try {
     const user = await User.findOne({ email })
     !user && res.status(404).send('user not found')
