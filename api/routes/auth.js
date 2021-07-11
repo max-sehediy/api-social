@@ -7,8 +7,9 @@ router.get('/', (req, res) => {
 })
 // create user
 router.post('/register', async (req, res, next) => {
-  const { username, email, password } = req.body
-
+  let { username, email, password } = req.body
+  username = username.toLowerCase()
+  email = email.toLowerCase()
   try {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(req.body.password, salt)
