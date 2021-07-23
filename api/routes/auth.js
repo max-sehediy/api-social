@@ -1,42 +1,18 @@
 const router = require("express").Router();
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-
+const authController = require('../controllers/auth');
+const authMiddelware = require("../middleware/authMiddelware");
 //REGISTER
-router.post("/register", async (req, res) => {
-  try {
-    //generate new password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
-    //create new user
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword,
-    });
-
-    //save user and respond
-    const user = await newUser.save();
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(500).json(err)
-  }
-});
+router.post("/register", authController.register);
 
 //LOGIN
-router.post("/login", async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.body.email });
-    !user && res.status(404).json("user not found");
+router.post("/login", authController.login);
+// delete
+router.delete("/login/:userId", authMiddelware, authController.delete);
 
-    const validPassword = await bcrypt.compare(req.body.password, user.password)
-    !validPassword && res.status(400).json("wrong password")
+// refresh
+router.post("/login/refresh", authMiddelware, authController.refresh);
 
-    res.status(200).json(user)
-  } catch (err) {
-    res.status(500).json(err)
-  }
-});
+// logout
+router.post("/login/logout", authMiddelware, authController.logout);
 
 module.exports = router;
