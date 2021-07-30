@@ -17,7 +17,7 @@ router.put("/:id", async (req, res) => {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
       });
-      res.status(200).json("Account has been updated");
+      res.status(200).json({ message: "Account has been updated" });
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -64,6 +64,7 @@ router.get("/friends/:userId", async (req, res) => {
         return User.findById(friendId);
       })
     );
+    // const friends = User.find({})
     let friendList = [];
     friends.map((friend) => {
       const { _id, username, profilePicture } = friend;
@@ -118,5 +119,15 @@ router.put("/:id/unfollow", async (req, res) => {
     res.status(403).json("you cant unfollow yourself");
   }
 });
+
+router.get('/all', async (req, res) => {
+  console.log('all')
+  try {
+    const allUsers = await User.find({})
+    res.status(200).json(allUsers)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
 
 module.exports = router;
