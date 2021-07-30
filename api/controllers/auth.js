@@ -8,6 +8,7 @@ const { generateAccessToken, generateRefreshToken, readRefreshTokens, saveRefres
 //REGISTER
 class authController {
   async register(req, res) {
+  
     try {
       //generate new password
       const salt = await bcrypt.genSalt(10);
@@ -61,23 +62,23 @@ class authController {
   }
   // refresh token
   async refresh(req, res) {
+    console.log(req.body)
     const refreshToken = req.body.refreshToken
     try {
       if (!refreshToken) {
         return res.status(401).json('You are not authenticated.')
       }
-      const tokens = await readRefreshTokens()
+      let tokens = await readRefreshTokens()
       if (!tokens.includes(refreshToken)) {
         return res.status(403).json('Refresh token is not valid!')
       }
       jwt.verify(refreshToken, 'mySecretKey', async (err, payload) => {
         err && console.log(err)
-        tokens.filter(token => token !== refreshToken)
-        const newAccessToken = generateAccessToken(payload)
-        const newRefreshToken = generateRefreshToken(payload)
+        tokens = tokens.filter(token => token !== refreshToken)
+        const newAccessToken = generateAccessToken(payload.user)
+        const newRefreshToken = generateRefreshToken(payload.user)
         tokens.push(newRefreshToken)
         const save = await saveRefreshTokens(tokens)
-        console.log(save)
         res.status(200).json({
           accessToken: newAccessToken,
           refreshToken: newRefreshToken
@@ -89,12 +90,12 @@ class authController {
   }
   // logout
   async logout(req, res) {
-    const refreshToken = req.body.token
+    const refreshToken = req.body.refreshToken
     try {
-      const tokens = await readRefreshTokens()
-      tokens.filter(token => token !== refreshToken)
+      let tokens = await readRefreshTokens()
+      tokens = tokens.filter(token => token !== refreshToken)
       const save = await saveRefreshTokens(tokens)
-      res.status(200).json('You logged out seccessful.')
+      res.status(200).json({ message: 'You logged out seccessful.', logout: true })
     } catch (error) {
       res.status(500).json(error.message)
 

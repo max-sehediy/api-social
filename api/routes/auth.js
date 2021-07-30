@@ -10,7 +10,7 @@ router.post("/login", authController.login);
 router.delete("/login/:userId", authMiddelware, authController.delete);
 
 // refresh
-router.post("/login/refresh", authMiddelware, authController.refresh);
+router.post("/login/refresh", authController.refresh);
 
 // logout
 router.post("/login/logout", authMiddelware, authController.logout);
