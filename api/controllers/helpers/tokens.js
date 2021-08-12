@@ -1,23 +1,18 @@
-const { readFile, writeFile } = require('fs/promises')
 const jwt = require('jsonwebtoken');
-const path = require("path");
+const User = require('../../models/User')
 
-
-let obj = {}
-const generateAccessToken = (user) => {
-  return jwt.sign({ user }, 'mySecretKey', { expiresIn: '5m' })
+const generateNewTokens = async (data) => {
+  const { userId, loginUser } = data
+  if (userId) {
+    let user = await User.findById(userId)
+    user.password = 'Yes of course, it was a password some time ago.'
+    const newAccessToken = jwt.sign({ user }, 'mySecretKey', { expiresIn: '5m' })
+    const newRefreshToken = jwt.sign({ user }, 'mySecretKey')
+    return { newAccessToken, newRefreshToken }
+  } else {
+    const accessToken = jwt.sign({ user: loginUser }, 'mySecretKey', { expiresIn: '5m' })
+    const refreshToken = jwt.sign({ user: loginUser }, 'mySecretKey')
+    return { accessToken, refreshToken }
+  }
 }
-const generateRefreshToken = (user) => {
-  return jwt.sign({ user }, 'mySecretKey')
-}
-let readRefreshTokens = async () => {
-  let verify = await readFile(path.resolve(__dirname, 'refreshTokens.json'), 'utf8')
-  let { tokens } = JSON.parse(verify)
-  return tokens
-}
-let saveRefreshTokens = async (array) => {
-  obj.tokens = array
-  await writeFile(path.resolve(__dirname, 'refreshTokens.json'), JSON.stringify(obj))
-  return obj
-}
-module.exports = { generateAccessToken, generateRefreshToken, saveRefreshTokens, readRefreshTokens }
+module.exports = { generateNewTokens }
