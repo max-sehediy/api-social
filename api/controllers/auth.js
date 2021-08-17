@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const { generateNewTokens } = require("./helpers/tokens");
 
 
-//REGISTER
 class authController {
   async register(req, res) {
 
@@ -43,7 +42,6 @@ class authController {
       const { _id } = await newRefreshToken.save()
       res.status(200).json({ accessToken, refreshToken, id: _id })
     } catch (err) {
-      console.log(err)
       res.status(500).json(err.message)
     }
   }
@@ -52,11 +50,11 @@ class authController {
   async refresh(req, res) {
     const refreshToken = req.body.refreshToken
     try {
-      if (!refreshToken || !req.body.id) {
+      if (!refreshToken || !req.body.id || refreshToken === null) {
         return res.status(401).json('You are not authenticated.')
       }
-      let token = await Tokens.findById(req.body.id) || null
-      if (token?.refreshToken !== refreshToken || token === null) {
+      let token = await Tokens.findById(req.body.id) 
+      if (token.refreshToken !== refreshToken || token === null) {
         return res.status(403).json('Refresh token is not valid!')
       }
       jwt.verify(refreshToken, 'mySecretKey', async (err, decoded) => {
