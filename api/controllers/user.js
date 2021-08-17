@@ -61,7 +61,6 @@ class userController {
           return User.findById(friendId);
         })
       );
-      // const friends = User.find({})
       let friendList = [];
       friends.map((friend) => {
         const { _id, username, profilePicture } = friend;

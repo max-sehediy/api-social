@@ -11,7 +11,6 @@ module.exports = function (req, res, next) {
         return res.status(403).json('Token is not valid')
       } else {
         req.user = await User.findById(payload.user._id)
-        console.log('middleware')
         next()
       }
     })
