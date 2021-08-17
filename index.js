@@ -46,6 +46,9 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
   }
 });
 
+app.use("/", (req, res) => {
+  res.send(`<h1>Backend server is running!</h1>`)
+});
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
