@@ -11,17 +11,29 @@ const postRoute = require("./api/routes/posts");
 const conversationRoute = require("./api/routes/conversations");
 const messageRoute = require("./api/routes/messages");
 const path = require("path");
+import cors from 'cors';
 
 dotenv.config();
 
 mongoose.connect(
-  'mongodb+srv://'+process.env.MONGO_KEYS+'@cluster0.k971a.mongodb.net/social?retryWrites=true&w=majority',
-  
+  'mongodb+srv://' + process.env.MONGO_KEYS + '@cluster0.k971a.mongodb.net/social?retryWrites=true&w=majority',
+
   { useNewUrlParser: true, useUnifiedTopology: true },
   () => {
     console.log("Connected to MongoDB");
   }
 );
+
+
+app.use(cors())
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", '*');
+//   res.header("Access-Control-Allow-Credentials", true);
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+//   res.header("Access-Control-Allow-Headers", 'Authorization, Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
+//   next();
+// });
+
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 //middleware
