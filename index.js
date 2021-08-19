@@ -11,7 +11,7 @@ const postRoute = require("./api/routes/posts");
 const conversationRoute = require("./api/routes/conversations");
 const messageRoute = require("./api/routes/messages");
 const path = require("path");
-import cors from 'cors';
+const cors = require('cors');
 
 dotenv.config();
 
